@@ -1,20 +1,28 @@
 # Ranger Roadmap
 
-## Phase 1 — End-to-End Verification Flow (MVP)
+## Phase 1 — End-to-End Verification Flow (MVP) [COMPLETE]
 
 **Goal:** Prove the full pipeline works: create review → trigger verification → view results with screenshots.
 
+**Status:** Complete and integration tested (2026-02-18).
+
 ### Deliverables
 
-- **Shared types** — IPC messages, API inputs, status enums, inferred row types
-- **Drizzle relations** — Enable relational queries for dashboard
-- **Seed script** — Sample profiles, reviews, scenarios, runs, artifacts
-- **Web infrastructure** — DB singleton, ID generator, API helpers
-- **API routes** — Profiles CRUD, Reviews CRUD, Scenarios CRUD, Runs list/detail, Artifacts file serving, Verify trigger/poll
-- **Agent worker** — Playwright screenshot-only (navigate, scroll, capture screenshots, send verdict via IPC)
-- **Agent manager** — Fork workers, handle IPC messages, write to DB
-- **CLI commands** — setup, profile add/list, create, list, show, go (with polling)
-- **Dashboard pages** — Reviews list, review detail (scenarios + latest runs), run detail (screenshot gallery)
+- [x] **Shared types** — IPC messages, API inputs, status enums, inferred row types
+- [x] **Drizzle relations** — Enable relational queries for dashboard
+- [x] **Seed script** — Sample profiles, reviews, scenarios, runs, artifacts
+- [x] **Web infrastructure** — DB singleton, ID generator, API helpers
+- [x] **API routes** — Profiles CRUD, Reviews CRUD, Scenarios CRUD, Runs list/detail, Artifacts file serving, Verify trigger/poll
+- [x] **Agent worker** — Playwright screenshot-only (navigate, scroll, capture 5 screenshots, send verdict via IPC)
+- [x] **Agent manager** — Fork workers, handle IPC messages, write to DB
+- [x] **CLI commands** — setup, profile add/list, create, list, show, go (with polling)
+- [x] **Dashboard pages** — Reviews list, review detail (scenarios + latest runs), run detail (screenshot gallery)
+
+### Integration Test Results
+
+- 27/27 API and dashboard tests passing
+- Full E2E verify flow: create profile + review → trigger verify → Playwright captures 5 screenshots → verdict "passed" in ~2.5s → artifacts served via dashboard
+- All 4 packages typecheck and build cleanly
 
 ### Constraints
 
