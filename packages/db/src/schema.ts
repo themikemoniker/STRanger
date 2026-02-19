@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, real, index } from "drizzle-orm/sqlite-core";
+import { relations } from "drizzle-orm";
 
 // ── Profiles ────────────────────────────────────────────────────────────────
 export const profiles = sqliteTable("profiles", {
@@ -132,3 +133,60 @@ export const hookEvents = sqliteTable("hook_events", {
   processedAt: text("processed_at"),
   createdAt: text("created_at").notNull(),
 });
+
+// ── Relations ───────────────────────────────────────────────────────────────
+export const profilesRelations = relations(profiles, ({ many }) => ({
+  reviews: many(featureReviews),
+  runs: many(verificationRuns),
+}));
+
+export const featureReviewsRelations = relations(featureReviews, ({ one, many }) => ({
+  profile: one(profiles, {
+    fields: [featureReviews.profileId],
+    references: [profiles.id],
+  }),
+  scenarios: many(scenarios),
+  comments: many(comments),
+}));
+
+export const scenariosRelations = relations(scenarios, ({ one, many }) => ({
+  review: one(featureReviews, {
+    fields: [scenarios.reviewId],
+    references: [featureReviews.id],
+  }),
+  runs: many(verificationRuns),
+}));
+
+export const verificationRunsRelations = relations(verificationRuns, ({ one, many }) => ({
+  scenario: one(scenarios, {
+    fields: [verificationRuns.scenarioId],
+    references: [scenarios.id],
+  }),
+  profile: one(profiles, {
+    fields: [verificationRuns.profileId],
+    references: [profiles.id],
+  }),
+  artifacts: many(artifacts),
+}));
+
+export const artifactsRelations = relations(artifacts, ({ one }) => ({
+  run: one(verificationRuns, {
+    fields: [artifacts.runId],
+    references: [verificationRuns.id],
+  }),
+}));
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  review: one(featureReviews, {
+    fields: [comments.reviewId],
+    references: [featureReviews.id],
+  }),
+  run: one(verificationRuns, {
+    fields: [comments.runId],
+    references: [verificationRuns.id],
+  }),
+  artifact: one(artifacts, {
+    fields: [comments.artifactId],
+    references: [artifacts.id],
+  }),
+}));

@@ -9,7 +9,8 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@ranger/db": "workspace:*"
+    "@ranger/db": "workspace:*",
+    "playwright": "^1.49.0"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
