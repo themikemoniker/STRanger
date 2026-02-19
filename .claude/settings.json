@@ -18,8 +18,29 @@
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "command": ".claude/hooks/post-edit-check.sh",
-        "blocking": true
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-edit-check.sh",
+            "blocking": true
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/ranger-notify.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/ranger-suggest.sh"
+          }
+        ]
       }
     ]
   }

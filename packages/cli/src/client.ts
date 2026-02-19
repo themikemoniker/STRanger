@@ -71,6 +71,9 @@ export class RangerClient {
     profileId?: string;
     scenarioIds?: string[];
     notes?: string;
+    apiKey?: string;
+    llmProvider?: string;
+    llmModel?: string;
   }) {
     return this.request<{ reviewId: string; runIds: string[]; scenarioCount: number }>(
       "/api/verify",
@@ -83,5 +86,65 @@ export class RangerClient {
 
   async pollRun(runId: string) {
     return this.request<Record<string, unknown>>(`/api/verify/${runId}`);
+  }
+
+  // Hooks
+  async hookNotify(data: { hookType: string; filePath?: string; sessionId?: string }) {
+    return this.request<{ ok: boolean }>("/api/hooks/notify", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async hookSuggest(data: { branch: string }) {
+    return this.request<{
+      review?: { id: string; title: string; status: string };
+      shouldVerify: boolean;
+      message: string;
+    }>("/api/hooks/suggest", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async streamRun(
+    runId: string,
+    onEvent: (event: { type: string; [key: string]: unknown }) => void,
+  ): Promise<void> {
+    const url = `${this.baseUrl}/api/verify/${runId}/stream`;
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      throw new Error(`SSE connection failed: HTTP ${res.status}`);
+    }
+
+    const reader = res.body?.getReader();
+    if (!reader) throw new Error("No response body");
+
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // Parse SSE events from buffer
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          try {
+            const event = JSON.parse(line.slice(6));
+            onEvent(event);
+            if (event.type === "verdict") return;
+          } catch {
+            // ignore parse errors
+          }
+        }
+      }
+    }
   }
 }
