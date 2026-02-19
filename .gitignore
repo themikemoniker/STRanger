@@ -23,3 +23,8 @@ Thumbs.db
 
 # Artifacts (runtime data, not the API route)
 /artifacts/
+
+# Test artifacts
+*.test.db
+*.test.db-shm
+*.test.db-wal
