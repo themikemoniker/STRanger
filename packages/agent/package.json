@@ -9,11 +9,13 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.77.0",
     "@ranger/db": "workspace:*",
+    "openai": "^6.22.0",
     "playwright": "^1.49.0"
   },
   "devDependencies": {
-    "typescript": "^5.7.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
   }
 }

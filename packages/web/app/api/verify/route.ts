@@ -73,6 +73,9 @@ export async function POST(request: Request) {
       scenarioDescription: sc.description,
       startPath: sc.startPath,
       notes: body.notes || undefined,
+      apiKey: body.apiKey || undefined,
+      llmProvider: body.llmProvider || undefined,
+      llmModel: body.llmModel || undefined,
     });
     runIds.push(runId);
   }

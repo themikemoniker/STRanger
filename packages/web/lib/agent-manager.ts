@@ -15,6 +15,8 @@ import type {
 } from "@ranger/db/types";
 import { getDb } from "./db";
 import { newId } from "./ids";
+import { broadcastToRun } from "./event-bus";
+export { subscribeToRun, broadcastToRun, type SseEvent } from "./event-bus";
 
 const DATA_DIR = join(homedir(), ".ranger", "data");
 
@@ -24,6 +26,8 @@ interface ActiveRun {
 }
 
 const activeRuns = new Map<string, ActiveRun>();
+
+// ── Worker management ────────────────────────────────────────────────────────
 
 function getWorkerPath(): string {
   // Resolve relative to monorepo root (packages/web is 2 levels deep)
@@ -43,6 +47,9 @@ export function startVerification(opts: {
   scenarioDescription: string;
   startPath?: string | null;
   notes?: string;
+  apiKey?: string;
+  llmProvider?: string;
+  llmModel?: string;
 }): string {
   const db = getDb();
   const runId = newId("run");
@@ -83,6 +90,9 @@ export function startVerification(opts: {
     baseUrl: opts.baseUrl,
     viewport,
     artifactsDir,
+    apiKey: opts.apiKey,
+    llmProvider: opts.llmProvider || (opts.apiKey ? "anthropic" : undefined),
+    llmModel: opts.llmModel,
     scenario: {
       id: opts.scenarioId,
       title: opts.scenarioTitle,
@@ -107,9 +117,10 @@ export function startVerification(opts: {
     if (msg.type === "step") {
       // Save artifact
       if (msg.screenshot) {
+        const artId = newId("art");
         db.insert(artifacts)
           .values({
-            id: newId("art"),
+            id: artId,
             runId,
             kind: "screenshot",
             filename: msg.screenshot.filename,
@@ -120,7 +131,31 @@ export function startVerification(opts: {
             createdAt: new Date().toISOString(),
           })
           .run();
+
+        // Broadcast to SSE subscribers
+        broadcastToRun(runId, {
+          type: "step",
+          stepIndex: msg.stepIndex,
+          action: msg.action,
+          detail: msg.detail,
+          screenshotUrl: `/api/artifacts/${artId}/file`,
+        });
+      } else {
+        broadcastToRun(runId, {
+          type: "step",
+          stepIndex: msg.stepIndex,
+          action: msg.action,
+          detail: msg.detail,
+        });
       }
+    } else if (msg.type === "think") {
+      broadcastToRun(runId, {
+        type: "think",
+        stepIndex: msg.stepIndex,
+        observation: msg.observation,
+        reasoning: msg.reasoning,
+        action: msg.action,
+      });
     } else if (msg.type === "verdict") {
       const finishedAt = new Date().toISOString();
 
@@ -145,12 +180,23 @@ export function startVerification(opts: {
         .where(eq(scenarios.id, opts.scenarioId))
         .run();
 
+      // Broadcast to SSE subscribers
+      broadcastToRun(runId, {
+        type: "verdict",
+        verdict: msg.verdict,
+        summary: msg.summary,
+        reasoning: msg.reasoning,
+        durationMs: msg.durationMs,
+      });
+
       activeRuns.delete(runId);
     } else if (msg.type === "error") {
       db.update(verificationRuns)
         .set({ errorMsg: msg.error })
         .where(eq(verificationRuns.id, runId))
         .run();
+
+      broadcastToRun(runId, { type: "error", error: msg.error });
     }
   });
 
@@ -173,6 +219,11 @@ export function startVerification(opts: {
         .set({ status: "error", updatedAt: finishedAt })
         .where(eq(scenarios.id, opts.scenarioId))
         .run();
+
+      broadcastToRun(runId, {
+        type: "error",
+        error: `Worker exited unexpectedly with code ${code}`,
+      });
 
       activeRuns.delete(runId);
     }

@@ -53,11 +53,20 @@ export interface IpcStepMessage {
   type: "step";
   stepIndex: number;
   action: string;
+  detail?: string;
   screenshot?: {
     filename: string;
     caption: string;
     sizeBytes: number;
   };
+}
+
+export interface IpcThinkMessage {
+  type: "think";
+  stepIndex: number;
+  observation: string;
+  reasoning: string;
+  action: string;
 }
 
 export interface IpcVerdictMessage {
@@ -73,7 +82,7 @@ export interface IpcErrorMessage {
   error: string;
 }
 
-export type IpcWorkerMessage = IpcStepMessage | IpcVerdictMessage | IpcErrorMessage;
+export type IpcWorkerMessage = IpcStepMessage | IpcThinkMessage | IpcVerdictMessage | IpcErrorMessage;
 
 // ── API input types ─────────────────────────────────────────────────────────
 export interface CreateProfileInput {
@@ -126,4 +135,5 @@ export interface TriggerVerifyInput {
   profileId?: string;
   scenarioIds?: string[];
   notes?: string;
+  apiKey?: string;
 }

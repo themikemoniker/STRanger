@@ -4,6 +4,7 @@ import { verificationRuns, artifacts, scenarios } from "@ranger/db";
 import { getDb } from "@/lib/db";
 import { StatusBadge } from "@/app/components/status-badge";
 import { notFound } from "next/navigation";
+import { LiveRunView } from "./live";
 
 export const dynamic = "force-dynamic";
 
@@ -86,46 +87,55 @@ export default async function RunDetailPage({
         )}
       </div>
 
-      <h2 className="text-lg font-semibold mb-3">
-        Screenshots ({runArtifacts.length})
-      </h2>
-
-      {runArtifacts.length === 0 ? (
-        <p className="text-gray-500">No artifacts captured yet.</p>
+      {run.verdict === "running" ? (
+        <>
+          <h2 className="text-lg font-semibold mb-3">Live Progress</h2>
+          <LiveRunView runId={runId} />
+        </>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {runArtifacts.map((art) => (
-            <div
-              key={art.id}
-              className="overflow-hidden rounded-lg border border-gray-200 bg-white"
-            >
-              <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`/api/artifacts/${art.id}/file`}
-                  alt={art.caption || art.filename}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="p-3">
-                <p className="text-sm font-medium">
-                  Step {art.stepIndex ?? "?"}
-                </p>
-                {art.caption && (
-                  <p className="mt-0.5 text-sm text-gray-500">
-                    {art.caption}
-                  </p>
-                )}
-                <p className="mt-1 text-xs text-gray-400">
-                  {art.filename}
-                  {art.sizeBytes
-                    ? ` (${(art.sizeBytes / 1024).toFixed(1)} KB)`
-                    : ""}
-                </p>
-              </div>
+        <>
+          <h2 className="text-lg font-semibold mb-3">
+            Screenshots ({runArtifacts.length})
+          </h2>
+
+          {runArtifacts.length === 0 ? (
+            <p className="text-gray-500">No artifacts captured yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {runArtifacts.map((art) => (
+                <div
+                  key={art.id}
+                  className="overflow-hidden rounded-lg border border-gray-200 bg-white"
+                >
+                  <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/api/artifacts/${art.id}/file`}
+                      alt={art.caption || art.filename}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="p-3">
+                    <p className="text-sm font-medium">
+                      Step {art.stepIndex ?? "?"}
+                    </p>
+                    {art.caption && (
+                      <p className="mt-0.5 text-sm text-gray-500">
+                        {art.caption}
+                      </p>
+                    )}
+                    <p className="mt-1 text-xs text-gray-400">
+                      {art.filename}
+                      {art.sizeBytes
+                        ? ` (${(art.sizeBytes / 1024).toFixed(1)} KB)`
+                        : ""}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );
