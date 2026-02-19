@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { eq } from "drizzle-orm";
-import { verificationRuns, artifacts, scenarios } from "@ranger/db";
+import { verificationRuns, artifacts, scenarios } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { StatusBadge } from "@/app/components/status-badge";
 import { notFound } from "next/navigation";

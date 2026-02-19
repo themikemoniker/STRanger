@@ -1,5 +1,5 @@
 /**
- * Ranger Dashboard Tour
+ * STRanger Dashboard Tour
  *
  * Takes screenshots and records video of the dashboard to give a visual tour.
  * Run: npx tsx tour.ts
@@ -32,7 +32,7 @@ async function main() {
     console.log(`  📸 ${filename} — ${description}`);
   }
 
-  console.log("\n🎬 Starting Ranger Dashboard Tour\n");
+  console.log("\n🎬 Starting STRanger Dashboard Tour\n");
 
   // ── 1. Reviews List ────────────────────────────────────────────────────────
   console.log("── Reviews List ──");
@@ -104,7 +104,7 @@ async function main() {
   // ── 7. Back to reviews for the final shot ──────────────────────────────────
   console.log("── Final Shot ──");
   await page.goto(`${BASE}/reviews`, { waitUntil: "networkidle" });
-  await snap("final-overview", "Final overview — Ranger dashboard with all review statuses");
+  await snap("final-overview", "Final overview — STRanger dashboard with all review statuses");
 
   // Close and save video
   await page.close(); // triggers video save

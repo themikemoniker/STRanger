@@ -1,10 +1,10 @@
 {
-  "name": "@ranger/cli",
+  "name": "@stranger/cli",
   "version": "0.0.1",
   "private": true,
   "type": "module",
   "bin": {
-    "ranger": "./dist/index.js"
+    "stranger": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

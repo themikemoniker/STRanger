@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { readFile } from "node:fs/promises";
-import { artifacts, verificationRuns } from "@ranger/db";
+import { artifacts, verificationRuns } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { apiError } from "@/lib/api-helpers";
 
@@ -30,7 +30,7 @@ export async function GET(
 
   const filePath = join(
     homedir(),
-    ".ranger",
+    ".stranger",
     "data",
     "artifacts",
     run.id,

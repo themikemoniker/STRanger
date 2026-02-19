@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { createServer, type Server } from "node:http";
-import { RangerClient } from "../client.js";
+import { StrangerClient } from "../client.js";
 
 function startJsonServer(
   handler: (body: unknown) => { status: number; json: unknown },
@@ -25,7 +25,7 @@ function startJsonServer(
   });
 }
 
-describe("RangerClient hook methods", () => {
+describe("StrangerClient hook methods", () => {
   let server: Server;
 
   afterEach(() => {
@@ -41,7 +41,7 @@ describe("RangerClient hook methods", () => {
       });
       server = testServer.server;
 
-      const client = new RangerClient(`http://localhost:${testServer.port}`);
+      const client = new StrangerClient(`http://localhost:${testServer.port}`);
       const result = await client.hookNotify({
         hookType: "PostToolUse",
         filePath: "/src/test.ts",
@@ -62,7 +62,7 @@ describe("RangerClient hook methods", () => {
       });
       server = testServer.server;
 
-      const client = new RangerClient(`http://localhost:${testServer.port}`);
+      const client = new StrangerClient(`http://localhost:${testServer.port}`);
       const result = await client.hookNotify({ hookType: "PostToolUse" });
       expect(result.ok).toBe(true);
     });
@@ -82,7 +82,7 @@ describe("RangerClient hook methods", () => {
       });
       server = testServer.server;
 
-      const client = new RangerClient(`http://localhost:${testServer.port}`);
+      const client = new StrangerClient(`http://localhost:${testServer.port}`);
       const result = await client.hookSuggest({ branch: "feat/login" });
 
       expect(result.shouldVerify).toBe(true);
@@ -103,7 +103,7 @@ describe("RangerClient hook methods", () => {
       });
       server = testServer.server;
 
-      const client = new RangerClient(`http://localhost:${testServer.port}`);
+      const client = new StrangerClient(`http://localhost:${testServer.port}`);
       const result = await client.hookSuggest({ branch: "main" });
 
       expect(result.shouldVerify).toBe(false);

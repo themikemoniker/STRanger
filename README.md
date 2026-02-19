@@ -24,14 +24,14 @@ With Claude Code hooks installed, the loop tightens further:
 Claude edits your code
   → PostToolUse hook logs the change (async, non-blocking)
   → Stop hook checks for an active review on your branch
-  → Suggests running `ranger go <review-id>` before you context-switch
+  → Suggests running `stranger go <review-id>` before you context-switch
 ```
 
 ## Quick start
 
 ```bash
 # Prerequisites: Node.js 20+, pnpm 9+
-git clone <repo-url> && cd ranger
+git clone <repo-url> && cd stranger
 pnpm install
 
 # Seed sample data and start the dashboard
@@ -44,19 +44,19 @@ pnpm dev
 
 ```bash
 # Point CLI at your server
-ranger setup --server-url http://localhost:4800
+stranger setup --server-url http://localhost:4800
 
 # Create a browser profile for your dev server
-ranger profile add local --base-url http://localhost:3000
+stranger profile add local --base-url http://localhost:3000
 
 # Create a review with scenarios
-ranger create --title "Login page" --branch feature/login
+stranger create --title "Login page" --branch feature/login
 
 # Run verification (screenshot-only mode)
-ranger go <review-id>
+stranger go <review-id>
 
 # Run with LLM agent (requires API key)
-ANTHROPIC_API_KEY=sk-... ranger go <review-id>
+ANTHROPIC_API_KEY=sk-... stranger go <review-id>
 ```
 
 ### Create a review via API
@@ -98,7 +98,7 @@ The web dashboard at `http://localhost:4800` shows all reviews, scenarios, runs,
 packages/
   db/       Drizzle ORM + better-sqlite3 schema, migrations
   web/      Next.js 15 dashboard + API server (port 4800)
-  cli/      Commander.js CLI ("ranger" binary)
+  cli/      Commander.js CLI ("stranger" binary)
   agent/    Playwright browser agent (spawned via child_process.fork)
 ```
 
@@ -108,7 +108,7 @@ packages/
 - Agent workers communicate back via Node.js IPC
 - Real-time updates stream to the dashboard via SSE
 
-**Database:** SQLite (WAL mode) stored at `~/.ranger/data/ranger.db`. Screenshots saved to `~/.ranger/data/artifacts/<runId>/`.
+**Database:** SQLite (WAL mode) stored at `~/.stranger/data/stranger.db`. Screenshots saved to `~/.stranger/data/artifacts/<runId>/`.
 
 ## Verification modes
 
@@ -122,10 +122,10 @@ Runs a ReAct loop: observe the page via screenshot, reason about what to do next
 
 ```bash
 # Anthropic (default)
-ANTHROPIC_API_KEY=sk-... ranger go <id>
+ANTHROPIC_API_KEY=sk-... stranger go <id>
 
 # OpenAI
-OPENAI_API_KEY=sk-... ranger go <id> --llm-provider openai
+OPENAI_API_KEY=sk-... stranger go <id> --llm-provider openai
 ```
 
 ## Claude Code hooks
@@ -134,23 +134,23 @@ STRanger includes hooks that integrate with [Claude Code](https://docs.anthropic
 
 | Hook | Event | Behavior |
 |------|-------|----------|
-| `ranger-notify.sh` | PostToolUse (async) | Logs edited file to STRanger API |
-| `ranger-suggest.sh` | Stop (sync) | Checks for active review on branch, injects suggestion |
+| `stranger-notify.sh` | PostToolUse (async) | Logs edited file to STRanger API |
+| `stranger-suggest.sh` | Stop (sync) | Checks for active review on branch, injects suggestion |
 
 The hooks are registered in `.claude/settings.json` and work automatically when Claude Code is used in this repo. They never block — errors are silently swallowed.
 
 ## CLI reference
 
 ```
-ranger setup [--server-url <url>]     Configure server connection
-ranger profile add <name> --base-url  Create a browser profile
-ranger profile list                   List profiles
-ranger create --title <t>             Create a review
-ranger list [--status <s>]            List reviews
-ranger show <id>                      Show review details
-ranger go <id> [--api-key <key>]      Run verification
-ranger hook notify                    Log hook event (stdin)
-ranger hook suggest                   Check branch for review (stdin)
+stranger setup [--server-url <url>]     Configure server connection
+stranger profile add <name> --base-url  Create a browser profile
+stranger profile list                   List profiles
+stranger create --title <t>             Create a review
+stranger list [--status <s>]            List reviews
+stranger show <id>                      Show review details
+stranger go <id> [--api-key <key>]      Run verification
+stranger hook notify                    Log hook event (stdin)
+stranger hook suggest                   Check branch for review (stdin)
 ```
 
 ## API endpoints

@@ -1,5 +1,5 @@
 {
-  "name": "@ranger/web",
+  "name": "@stranger/web",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@ranger/db": "workspace:*",
+    "@stranger/db": "workspace:*",
     "drizzle-orm": "^0.38.0",
     "nanoid": "^5.0.0",
     "next": "^15.0.0",

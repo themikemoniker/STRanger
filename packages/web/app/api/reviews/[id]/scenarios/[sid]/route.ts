@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { scenarios } from "@ranger/db";
+import { scenarios } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { apiError, now } from "@/lib/api-helpers";
 

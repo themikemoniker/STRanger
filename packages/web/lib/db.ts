@@ -1,10 +1,10 @@
 import { join } from "node:path";
 import { mkdirSync } from "node:fs";
 import { homedir } from "node:os";
-import { createDb, type Db } from "@ranger/db";
+import { createDb, type Db } from "@stranger/db";
 
-const DATA_DIR = join(homedir(), ".ranger", "data");
-const DB_PATH = join(DATA_DIR, "ranger.db");
+const DATA_DIR = join(homedir(), ".stranger", "data");
+const DB_PATH = join(DATA_DIR, "stranger.db");
 
 function initDb(): Db {
   mkdirSync(DATA_DIR, { recursive: true });
@@ -12,11 +12,11 @@ function initDb(): Db {
 }
 
 // Survive Next.js HMR in dev mode
-const g = globalThis as unknown as { __rangerDb?: Db };
+const g = globalThis as unknown as { __strangerDb?: Db };
 
 export function getDb(): Db {
-  if (!g.__rangerDb) {
-    g.__rangerDb = initDb();
+  if (!g.__strangerDb) {
+    g.__strangerDb = initDb();
   }
-  return g.__rangerDb;
+  return g.__strangerDb;
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { hookEvents } from "@ranger/db";
+import { hookEvents } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { newId } from "@/lib/ids";
 import { apiError, now } from "@/lib/api-helpers";

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { eq, isNull, and, ne } from "drizzle-orm";
-import { featureReviews } from "@ranger/db";
+import { featureReviews } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { apiError } from "@/lib/api-helpers";
 
@@ -34,6 +34,6 @@ export async function POST(request: Request) {
   return NextResponse.json({
     review: { id: review.id, title: review.title, status: review.status },
     shouldVerify: true,
-    message: `Review "${review.title}" (${review.id}) is active on this branch. Run \`ranger go ${review.id}\` to verify.`,
+    message: `Review "${review.title}" (${review.id}) is active on this branch. Run \`stranger go ${review.id}\` to verify.`,
   });
 }

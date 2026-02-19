@@ -2,12 +2,12 @@ import { resolve } from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@ranger/db"],
+  transpilePackages: ["@stranger/db"],
   serverExternalPackages: ["better-sqlite3"],
   outputFileTracingRoot: resolve(__dirname, "../../"),
   eslint: { ignoreDuringBuilds: true },
   webpack: (config, { isServer }) => {
-    // Allow .js imports to resolve to .ts source files (needed for @ranger/db)
+    // Allow .js imports to resolve to .ts source files (needed for @stranger/db)
     config.resolve.extensionAlias = {
       ".js": [".ts", ".tsx", ".js", ".jsx"],
     };

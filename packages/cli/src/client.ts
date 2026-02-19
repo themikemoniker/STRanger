@@ -1,6 +1,6 @@
 import { loadConfig } from "./config.js";
 
-export class RangerClient {
+export class StrangerClient {
   private baseUrl: string;
 
   constructor(serverUrl?: string) {

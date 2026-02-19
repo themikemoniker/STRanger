@@ -1,4 +1,4 @@
-# Ranger Clone — Architecture & Design
+# STRanger Clone — Architecture & Design
 ## Recommendation: Drizzle over Prisma
 **Drizzle ORM** is the right choice here. Reasons: - **SQLite-native**: 
 Drizzle's SQLite driver (`better-sqlite3`) is synchronous and 
@@ -164,7 +164,7 @@ GET /api/reviews/:id/feedback # Unresolved comments + latest verdicts
 step data: {"index": 3, "action": "click", "selector": "#submit", 
 "screenshotId": "abc123"} event: verdict data: {"verdict": "partial", 
 "summary": "..."} event: done data: {} ``` The dashboard subscribes to 
-this for live progress. The CLI uses it for `ranger go --watch`. ---
+this for live progress. The CLI uses it for `ststranger go --watch`. ---
 ## 3. Agent Worker Architecture
 ### Why a separate process
 The browser agent is CPU/memory intensive and long-running. It must 
@@ -239,7 +239,7 @@ decides next action (click, type, navigate, scroll, assert, done) 3.
 verdict or max steps exceeded Each step saves a screenshot artifact. 
 Video recording captures the full session.
 ### Parallelism
-- Per-scenario parallelism: `ranger go` on a review with 5 scenarios can 
+- Per-scenario parallelism: `ststranger go` on a review with 5 scenarios can 
 run them concurrently (each gets its own browser context) - 
 `maxConcurrent` is configurable, defaults to CPU count - Scenarios 
 within a single review run are executed in parallel up to the limit, 
@@ -247,13 +247,13 @@ then queued ---
 ## 4. CLI Architecture
 ### Package: `packages/cli/`
 Built with **Commander.js** (lightweight, well-maintained). Published as 
-`ranger-cli` on npm.
+`stranger-cli` on npm.
 ### Config storage
-``` ~/.ranger/ config.json # Global config: { serverUrl, token, 
+``` ~/.ststranger/ config.json # Global config: { serverUrl, token, 
   defaultProfile } profiles/
     staging.json # Per-profile overrides & encrypted auth state keys/ 
     ci.key # Encryption key for CI profiles (see §8)
-``` Scoped project config (optional, committed to repo): ``` .ranger/ 
+``` Scoped project config (optional, committed to repo): ``` .ststranger/ 
   project.json # { defaultProfile: "local", serverUrl: 
   "http://localhost:4800" }
 ``` Resolution order: CLI flag → project config → global config → 
@@ -261,7 +261,7 @@ defaults.
 ### How the CLI talks to the server
 Every CLI command is a thin HTTP client wrapper: ```ts
 // packages/cli/src/client.ts
-class RangerClient { constructor(private baseUrl: string, private token: 
+class STRangerClient { constructor(private baseUrl: string, private token: 
   string) {} async createReview(data: CreateReviewInput) {
     return this.post('/api/reviews', data);
   }
@@ -275,38 +275,38 @@ class RangerClient { constructor(private baseUrl: string, private token:
 }
 ```
 ### Key CLI flows
-**`ranger setup`**: Starts the Next.js server if not running, 
-initializes SQLite DB, creates `~/.ranger/config.json`, generates a 
-shared secret. **`ranger go`**: The primary verification command. ``` 1. 
+**`stranger setup`**: Starts the Next.js server if not running, 
+initializes SQLite DB, creates `~/.ststranger/config.json`, generates a 
+shared secret. **`ststranger go`**: The primary verification command. ``` 1. 
 Resolve profile (--profile flag or default) 2. POST /api/verify { 
 reviewId, scenarioIds, profileId, notes } 3. Server spawns agent 
 worker(s) 4. CLI subscribes to SSE stream, renders live progress with 
 ora/chalk 5. On completion, prints verdict table + artifact links ``` 
-**`ranger create`**: Interactive or accepts JSON/YAML. Calls `POST 
+**`stranger create`**: Interactive or accepts JSON/YAML. Calls `POST 
 /api/reviews`. ---
 ## 5. File Storage Layout
-``` ~/.ranger/ data/ ranger.db # SQLite database artifacts/ {run_id}/ 
+``` ~/.ststranger/ data/ ststranger.db # SQLite database artifacts/ {run_id}/ 
         screenshot-001.png screenshot-002.png video.webm trace.zip # 
         Playwright trace agent-log.json # Full LLM conversation log
 ``` Next.js serves artifacts via `GET /api/artifacts/:id/file`, which 
 reads `filename` from the DB and streams from disk. This avoids exposing 
-raw filesystem paths. **Cleanup policy**: `ranger clean` deletes 
+raw filesystem paths. **Cleanup policy**: `stranger clean` deletes 
 artifacts older than N days (configurable). Soft-deleted reviews are 
 purged after 30 days. ---
 ## 6. Hook System + Skills Integration
 ### Claude Code Plugin (`plugin/`)
 The plugin registers hooks via the Claude Code plugin manifest: ```json 
 {
-  "name": "ranger", "description": "UI feature review automation", 
+  "name": "stranger", "description": "UI feature review automation", 
   "hooks": {
-    "session-start": "npx ranger hook session-start", "session-end": 
-    "npx ranger hook session-end", "post-edit": "npx ranger hook 
-    post-edit --files $CHANGED_FILES", "pre-compact": "npx ranger hook 
-    pre-compact", "plan-start": "npx ranger hook plan-start", 
-    "exit-plan-mode": "npx ranger hook exit-plan-mode"
+    "session-start": "npx stranger hook session-start", "session-end": 
+    "npx stranger hook session-end", "post-edit": "npx stranger hook 
+    post-edit --files $CHANGED_FILES", "pre-compact": "npx stranger hook 
+    pre-compact", "plan-start": "npx stranger hook plan-start", 
+    "exit-plan-mode": "npx stranger hook exit-plan-mode"
   },
-  "slash_commands": { "/ranger:enable": "npx ranger hook enable", 
-    "/ranger:disable": "npx ranger hook disable", "/ranger": "npx ranger 
+  "slash_commands": { "/stranger:enable": "npx stranger hook enable", 
+    "/stranger:disable": "npx stranger hook disable", "/stranger": "npx stranger 
     hook status"
   }
 }
@@ -327,14 +327,14 @@ The plugin registers hooks via the Claude Code plugin manifest: ```json
 | retains awareness. | `plan-start` | Inject current review requirements 
 | so the agent plans with verification in mind. | `session-end` | Record 
 | session summary, update review metadata. | `enable/disable` | Toggle a 
-| `.ranger-enabled` flag in project config; controls whether other hooks 
+| `.ststranger-enabled` flag in project config; controls whether other hooks 
 | fire. |
 ### Skills (`skills/`)
 Markdown files that Claude Code loads into context: ``` skills/ 
-  ranger-overview.md # What Ranger is, how it works creating-reviews.md 
+  stranger-overview.md # What STRanger is, how it works creating-reviews.md 
   # How to structure good scenarios
   interpreting-results.md # What verdicts mean, how to fix failures 
-  verification-workflow.md # Recommended dev loop with Ranger
+  verification-workflow.md # Recommended dev loop with STRanger
 ``` The `session-start` hook tells Claude Code to read the relevant 
 skill file based on the current task.
 ### Feedback loop
@@ -351,8 +351,8 @@ secure enough to prevent accidental exposure**.
 ``` ┌─────────┐ ┌────────────┐ │ CLI │──POST /api/auth/token──▶│ Next.js 
 │ │ │ { secret: "abc..." } │ Server │ │ │◀── { jwt: "eyJ..." } ───│ │ │ 
 │ │ │ │ │──GET /api/reviews ──────│ │ │ │ Authorization: Bearer │ │ │ │ 
-eyJ...  │ │ └─────────┘ └────────────┘ ``` 1. **`ranger setup`** 
-generates a random 256-bit secret, stores it in `~/.ranger/config.json` 
+eyJ...  │ │ └─────────┘ └────────────┘ ``` 1. **`stranger setup`** 
+generates a random 256-bit secret, stores it in `~/.ststranger/config.json` 
 and in the server's env/config. 2. CLI exchanges the secret for a JWT 
 (1-hour expiry) via `POST /api/auth/token`. 3. All subsequent API calls 
 use the JWT as a Bearer token. 4. The plugin/hooks inherit the same 
@@ -372,11 +372,11 @@ login.
 ### Setup
 ```bash
 # On dev machine: capture auth state, encrypt it
-ranger profile add ci --base-url https://staging.example.com ranger 
-login --profile ci # Opens browser, captures storageState ranger profile 
+stranger profile add ci --base-url https://staging.example.com stranger 
+login --profile ci # Opens browser, captures storageState stranger profile 
 encrypt-auth ci # Encrypts authState with a generated key
 # Output: ✓ Auth state encrypted. Set RANGER_CI_KEY=<key> in your CI 
-# environment. ✓ Encrypted auth saved to ~/.ranger/profiles/ci.json
+# environment. ✓ Encrypted auth saved to ~/.ststranger/profiles/ci.json
 ```
 ### Encryption
 - **Algorithm**: AES-256-GCM (via Node.js `crypto`) - **Key**: Random 
@@ -387,10 +387,10 @@ env var
 ### CI usage
 ```yaml
 # GitHub Actions example
-- name: Run Ranger verification env: RANGER_CI_KEY: ${{ 
+- name: Run STRanger verification env: RANGER_CI_KEY: ${{ 
     secrets.RANGER_CI_KEY }} RANGER_LLM_API_KEY: ${{ 
     secrets.ANTHROPIC_API_KEY }}
-  run: | npx ranger setup --ci --profile ci npx ranger go --review ${{ 
+  run: | npx stranger setup --ci --profile ci npx ststranger go --review ${{ 
     github.event.pull_request.number }}
 ``` `--ci` flag: starts the server in background, skips interactive 
 prompts, outputs JSON for machine parsing, sets exit code based on 
@@ -400,7 +400,7 @@ Encrypted auth state will expire (cookies/tokens). Options: -
 **Programmatic login**: Profile can store credentials (encrypted) and 
 re-authenticate via Playwright before each run - **Service account**: 
 For staging envs, use long-lived API tokens instead of browser cookies - 
-**Manual refresh**: `ranger profile refresh-auth ci && ranger profile 
+**Manual refresh**: `stranger profile refresh-auth ci && stranger profile 
 encrypt-auth ci` ---
 ## 9. Technical Risks & Design Tradeoffs
 ### ⚠️ Risk: LLM browser agent reliability
@@ -426,7 +426,7 @@ This serializes writes through one process, avoiding `SQLITE_BUSY`
 errors.
 ### ⚠️ Risk: Large artifact storage
 Video files can be large. Mitigations: - Record at 720p, 15fps by 
-default - Auto-cleanup policy in `ranger clean` - Future: optional 
+default - Auto-cleanup policy in `stranger clean` - Future: optional 
 S3-compatible upload for teams
 ### Tradeoff: Monolithic Next.js vs separate API server
 Keeping API routes in Next.js simplifies deployment (one process) but 
@@ -442,7 +442,7 @@ call for a BullMQ producer, with workers consuming from Redis. The
 worker code itself doesn't change — only the transport layer.
 ### Tradeoff: Bringing your own LLM key
 Good for FOSS (no vendor lock-in, no API billing) but creates UX 
-friction. Mitigate with: - Clear setup wizard in `ranger setup` - 
+friction. Mitigate with: - Clear setup wizard in `stranger setup` - 
 Support for `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` env vars 
 (auto-detected) - Validate the key works before saving the profile
 ### Design principle: The CLI is the source of truth for the coding 

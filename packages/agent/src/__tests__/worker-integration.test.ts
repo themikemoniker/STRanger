@@ -9,15 +9,15 @@ import type {
   IpcStartMessage,
   IpcWorkerMessage,
   RunConfig,
-} from "@ranger/db/types";
+} from "@stranger/db/types";
 
-// Use the compiled JS worker — run `pnpm --filter @ranger/agent build` before tests
+// Use the compiled JS worker — run `pnpm --filter @stranger/agent build` before tests
 const AGENT_ROOT = join(import.meta.dirname, "..", "..");
 const WORKER_PATH = join(AGENT_ROOT, "dist", "worker.js");
 
 // Each test run gets a unique temp dir to avoid collisions
 function uniqueArtifactsDir(): string {
-  const dir = join(tmpdir(), `ranger-test-${randomBytes(6).toString("hex")}`);
+  const dir = join(tmpdir(), `stranger-test-${randomBytes(6).toString("hex")}`);
   mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -32,7 +32,7 @@ function startTestServer(): Promise<{ server: Server; port: number }> {
         <html>
           <head><title>Test Page</title></head>
           <body>
-            <h1>Hello Ranger</h1>
+            <h1>Hello STRanger</h1>
             <p>This is a test page for screenshot verification.</p>
             <div style="height: 2000px; background: linear-gradient(to bottom, white, blue);">
               Tall content for scroll testing

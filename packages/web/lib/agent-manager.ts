@@ -7,18 +7,18 @@ import {
   verificationRuns,
   artifacts,
   scenarios,
-} from "@ranger/db";
+} from "@stranger/db";
 import type {
   RunConfig,
   IpcStartMessage,
   IpcWorkerMessage,
-} from "@ranger/db/types";
+} from "@stranger/db/types";
 import { getDb } from "./db";
 import { newId } from "./ids";
 import { broadcastToRun } from "./event-bus";
 export { subscribeToRun, broadcastToRun, type SseEvent } from "./event-bus";
 
-const DATA_DIR = join(homedir(), ".ranger", "data");
+const DATA_DIR = join(homedir(), ".stranger", "data");
 
 interface ActiveRun {
   runId: string;

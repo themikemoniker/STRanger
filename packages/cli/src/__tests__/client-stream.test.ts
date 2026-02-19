@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { createServer, type Server } from "node:http";
-import { RangerClient } from "../client.js";
+import { StrangerClient } from "../client.js";
 
 function startSseServer(events: Array<Record<string, unknown>>): Promise<{ server: Server; port: number }> {
   return new Promise((resolve) => {
@@ -32,7 +32,7 @@ function startSseServer(events: Array<Record<string, unknown>>): Promise<{ serve
   });
 }
 
-describe("RangerClient.streamRun", () => {
+describe("StrangerClient.streamRun", () => {
   let server: Server;
 
   afterEach(() => {
@@ -52,7 +52,7 @@ describe("RangerClient.streamRun", () => {
     // Point client at our test SSE server
     // The streamRun method constructs the URL as ${baseUrl}/api/verify/${runId}/stream
     // So we need to set up our server to handle any path
-    const client = new RangerClient(`http://localhost:${testServer.port}`);
+    const client = new StrangerClient(`http://localhost:${testServer.port}`);
 
     const received: Array<Record<string, unknown>> = [];
     await client.streamRun("test-run", (event) => {
@@ -78,7 +78,7 @@ describe("RangerClient.streamRun", () => {
     const testServer = await startSseServer(events);
     server = testServer.server;
 
-    const client = new RangerClient(`http://localhost:${testServer.port}`);
+    const client = new StrangerClient(`http://localhost:${testServer.port}`);
     const received: Array<Record<string, unknown>> = [];
 
     await client.streamRun("test-run-2", (event) => {
@@ -101,7 +101,7 @@ describe("RangerClient.streamRun", () => {
     const testServer = await startSseServer(events);
     server = testServer.server;
 
-    const client = new RangerClient(`http://localhost:${testServer.port}`);
+    const client = new StrangerClient(`http://localhost:${testServer.port}`);
     const received: Array<Record<string, unknown>> = [];
 
     await client.streamRun("test-run-3", (event) => {

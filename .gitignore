@@ -18,8 +18,8 @@ Thumbs.db
 *.swp
 *.swo
 
-# Ranger runtime data
-.ranger/
+# STRanger runtime data
+.stranger/
 
 # Artifacts (runtime data, not the API route)
 /artifacts/

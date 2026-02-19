@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { eq, isNull, and } from "drizzle-orm";
-import { featureReviews, scenarios } from "@ranger/db";
+import { featureReviews, scenarios } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { newId } from "@/lib/ids";
 import { apiError, now } from "@/lib/api-helpers";
-import type { CreateScenarioInput } from "@ranger/db/types";
+import type { CreateScenarioInput } from "@stranger/db/types";
 
 export async function GET(request: Request) {
   const db = getDb();

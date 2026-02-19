@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Async PostToolUse hook: pipes stdin to `ranger hook notify`.
+# Async PostToolUse hook: pipes stdin to `stranger hook notify`.
 # Always exits 0 — never blocks Claude Code.
 
 INPUT=$(cat)

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { isNull } from "drizzle-orm";
-import { featureReviews } from "@ranger/db";
+import { featureReviews } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { StatusBadge } from "@/app/components/status-badge";
 

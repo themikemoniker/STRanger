@@ -1,26 +1,26 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { loadConfig, saveConfig } from "./config.js";
-import { RangerClient } from "./client.js";
+import { StrangerClient } from "./client.js";
 
 const program = new Command();
 
 program
-  .name("ranger")
+  .name("stranger")
   .description("Self-hosted UI feature review automation")
   .version("0.0.1");
 
 // ── Setup ───────────────────────────────────────────────────────────────────
 program
   .command("setup")
-  .description("Initialize Ranger config and verify server connection")
+  .description("Initialize STRanger config and verify server connection")
   .option("--server-url <url>", "Server URL", "http://localhost:4800")
   .action(async (opts: { serverUrl: string }) => {
     saveConfig({ serverUrl: opts.serverUrl });
     console.log(`Config saved. Server URL: ${opts.serverUrl}`);
 
     try {
-      const client = new RangerClient(opts.serverUrl);
+      const client = new StrangerClient(opts.serverUrl);
       const status = await client.status();
       console.log(`Server connected: v${status.version}`);
     } catch (err) {
@@ -45,7 +45,7 @@ profileCmd
   .option("--default", "Set as default profile")
   .action(async (name: string, opts: { baseUrl: string; browser: string; viewport?: string; default?: boolean }) => {
     try {
-      const client = new RangerClient();
+      const client = new StrangerClient();
       await client.createProfile({
         name,
         baseUrl: opts.baseUrl,
@@ -65,10 +65,10 @@ profileCmd
   .description("List all profiles")
   .action(async () => {
     try {
-      const client = new RangerClient();
+      const client = new StrangerClient();
       const profiles = await client.listProfiles() as Array<Record<string, unknown>>;
       if (profiles.length === 0) {
-        console.log("No profiles found. Use `ranger profile add` to create one.");
+        console.log("No profiles found. Use `stranger profile add` to create one.");
         return;
       }
       for (const p of profiles) {
@@ -91,7 +91,7 @@ program
   .option("--profile <id>", "Profile ID to use")
   .action(async (opts: { title: string; description?: string; branch?: string; profile?: string }) => {
     try {
-      const client = new RangerClient();
+      const client = new StrangerClient();
       const review = await client.createReview({
         title: opts.title,
         description: opts.description,
@@ -114,7 +114,7 @@ program
   .option("--status <status>", "Filter by status")
   .action(async (opts: { status?: string }) => {
     try {
-      const client = new RangerClient();
+      const client = new StrangerClient();
       const reviews = await client.listReviews(opts.status) as Array<Record<string, unknown>>;
       if (reviews.length === 0) {
         console.log("No reviews found.");
@@ -141,7 +141,7 @@ program
   .argument("<id>", "Review ID")
   .action(async (id: string) => {
     try {
-      const client = new RangerClient();
+      const client = new StrangerClient();
       const review = await client.getReview(id);
       console.log(`Review: ${review.title}`);
       console.log(`  ID:     ${review.id}`);
@@ -185,7 +185,7 @@ program
     llmModel?: string;
   }) => {
     try {
-      const client = new RangerClient();
+      const client = new StrangerClient();
       const provider = opts.llmProvider || "anthropic";
       const apiKey = opts.apiKey
         || (provider === "openai" ? process.env.OPENAI_API_KEY : process.env.ANTHROPIC_API_KEY);
@@ -277,7 +277,7 @@ hookCmd
       const parsed = JSON.parse(input);
       const filePath = parsed?.tool_input?.file_path;
 
-      const client = new RangerClient();
+      const client = new StrangerClient();
       await client.hookNotify({
         hookType: "PostToolUse",
         filePath: filePath || undefined,
@@ -306,7 +306,7 @@ hookCmd
         process.exit(0);
       }
 
-      const client = new RangerClient();
+      const client = new StrangerClient();
       const result = await client.hookSuggest({ branch });
 
       if (result.shouldVerify && result.review) {
@@ -326,7 +326,7 @@ program
   .description("Remove old artifacts and purge deleted reviews")
   .option("--days <n>", "Delete artifacts older than N days", "30")
   .action(() => {
-    console.log("TODO: ranger clean");
+    console.log("TODO: stranger clean");
   });
 
 // ── Login ───────────────────────────────────────────────────────────────────
@@ -335,7 +335,7 @@ program
   .description("Authenticate a profile via browser")
   .option("--profile <name>", "Profile to authenticate")
   .action(() => {
-    console.log("TODO: ranger login");
+    console.log("TODO: stranger login");
   });
 
 function sleep(ms: number): Promise<void> {

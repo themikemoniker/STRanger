@@ -1,5 +1,5 @@
 {
-  "name": "@ranger/agent",
+  "name": "@stranger/agent",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.77.0",
-    "@ranger/db": "workspace:*",
+    "@stranger/db": "workspace:*",
     "openai": "^6.22.0",
     "playwright": "^1.49.0"
   },

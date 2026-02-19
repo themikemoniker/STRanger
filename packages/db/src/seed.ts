@@ -20,8 +20,8 @@ function ago(minutes: number) {
   return new Date(Date.now() - minutes * 60_000).toISOString();
 }
 
-const DATA_DIR = join(homedir(), ".ranger", "data");
-const DB_PATH = join(DATA_DIR, "ranger.db");
+const DATA_DIR = join(homedir(), ".stranger", "data");
+const DB_PATH = join(DATA_DIR, "stranger.db");
 
 mkdirSync(DATA_DIR, { recursive: true });
 

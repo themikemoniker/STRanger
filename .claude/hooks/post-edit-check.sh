@@ -27,16 +27,16 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 # Determine which package was changed and run scoped typecheck
 case "$FILE_PATH" in
   */packages/db/*)
-    pnpm --filter @ranger/db typecheck 2>&1 || { echo "BLOCKED: @ranger/db typecheck failed"; exit 1; }
+    pnpm --filter @stranger/db typecheck 2>&1 || { echo "BLOCKED: @stranger/db typecheck failed"; exit 1; }
     ;;
   */packages/web/*)
-    pnpm --filter @ranger/web typecheck 2>&1 || { echo "BLOCKED: @ranger/web typecheck failed"; exit 1; }
+    pnpm --filter @stranger/web typecheck 2>&1 || { echo "BLOCKED: @stranger/web typecheck failed"; exit 1; }
     ;;
   */packages/cli/*)
-    pnpm --filter @ranger/cli typecheck 2>&1 || { echo "BLOCKED: @ranger/cli typecheck failed"; exit 1; }
+    pnpm --filter @stranger/cli typecheck 2>&1 || { echo "BLOCKED: @stranger/cli typecheck failed"; exit 1; }
     ;;
   */packages/agent/*)
-    pnpm --filter @ranger/agent typecheck 2>&1 || { echo "BLOCKED: @ranger/agent typecheck failed"; exit 1; }
+    pnpm --filter @stranger/agent typecheck 2>&1 || { echo "BLOCKED: @stranger/agent typecheck failed"; exit 1; }
     ;;
   *)
     # File outside packages — run full typecheck

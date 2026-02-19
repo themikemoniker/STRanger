@@ -1,4 +1,4 @@
-# Ranger Roadmap
+# STRanger Roadmap
 
 ## Phase 1 — End-to-End Verification Flow (MVP) [COMPLETE]
 

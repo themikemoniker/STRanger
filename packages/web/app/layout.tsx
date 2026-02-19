@@ -3,7 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ranger",
+  title: "STRanger",
   description: "Self-hosted UI feature review automation",
 };
 
@@ -18,7 +18,7 @@ export default function RootLayout({
         <div className="flex min-h-screen">
           <nav className="w-56 shrink-0 border-r border-gray-200 bg-white p-4">
             <Link href="/reviews" className="block text-lg font-bold mb-6">
-              Ranger
+              STRanger
             </Link>
             <ul className="space-y-1">
               <li>

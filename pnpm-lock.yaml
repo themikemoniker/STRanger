@@ -17,7 +17,7 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.77.0
         version: 0.77.0
-      '@ranger/db':
+      '@stranger/db':
         specifier: workspace:*
         version: link:../db
       openai:
@@ -74,7 +74,7 @@ importers:
 
   packages/web:
     dependencies:
-      '@ranger/db':
+      '@stranger/db':
         specifier: workspace:*
         version: link:../db
       drizzle-orm:

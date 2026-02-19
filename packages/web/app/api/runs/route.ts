@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { verificationRuns } from "@ranger/db";
+import { verificationRuns } from "@stranger/db";
 import { getDb } from "@/lib/db";
 
 export async function GET(request: Request) {

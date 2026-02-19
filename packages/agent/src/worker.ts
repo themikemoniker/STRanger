@@ -16,7 +16,7 @@ import type {
   IpcStartMessage,
   IpcThinkMessage,
   IpcWorkerMessage,
-} from "@ranger/db/types";
+} from "@stranger/db/types";
 import { createProvider, type LlmProvider, type LlmMessage, type LlmContentPart } from "./llm/index.js";
 import { parseLlmResponse, type AgentAction } from "./react-utils.js";
 

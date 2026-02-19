@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { eq, count } from "drizzle-orm";
-import { scenarios, featureReviews } from "@ranger/db";
+import { scenarios, featureReviews } from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { newId } from "@/lib/ids";
 import { apiError, now } from "@/lib/api-helpers";

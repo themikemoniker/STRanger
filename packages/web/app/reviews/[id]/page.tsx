@@ -5,7 +5,7 @@ import {
   scenarios,
   verificationRuns,
   profiles,
-} from "@ranger/db";
+} from "@stranger/db";
 import { getDb } from "@/lib/db";
 import { StatusBadge } from "@/app/components/status-badge";
 import { notFound } from "next/navigation";
