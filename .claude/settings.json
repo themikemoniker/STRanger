@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Read",
+      "Bash(pnpm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(git:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(curl|wget * | bash)",
+      "WebFetch(non-localhost)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": ".claude/hooks/post-edit-check.sh",
+        "blocking": true
+      }
+    ]
+  }
+}

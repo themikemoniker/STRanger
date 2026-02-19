@@ -1,0 +1,24 @@
+{
+  "name": "ranger",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Self-hosted UI feature review automation tool",
+  "scripts": {
+    "dev": "pnpm --filter @ranger/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}

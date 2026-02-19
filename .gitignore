@@ -1,0 +1,25 @@
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ranger runtime data
+.ranger/
+
+# Artifacts
+artifacts/
