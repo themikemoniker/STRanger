@@ -52,6 +52,7 @@ pnpm build            # Build all packages (tsc for db/cli/agent, next build for
 pnpm dev              # Start Next.js dev server on port 4800
 pnpm typecheck        # Type-check all packages
 pnpm lint             # Lint all packages
+pnpm test             # Run all tests (vitest)
 ```
 
 ### Running individual packages
@@ -70,3 +71,26 @@ pnpm --filter @ranger/db db:migrate  # Run Drizzle migration
 - `packages/db` is the shared dependency — schema changes affect all packages
 - The web package transpiles `@ranger/db` via `transpilePackages` in next.config.ts
 - See sub-package READMEs for package-specific context
+
+## Common Mistakes
+
+- **better-sqlite3 + Next.js bundling**: Must add BOTH `serverExternalPackages: ["better-sqlite3"]` AND `config.externals = [...(config.externals || []), "better-sqlite3"]` in webpack config — one alone is not enough
+- **@ranger/db uses .js extensions** in imports (Node16 module resolution): Next.js needs `config.resolve.extensionAlias = { ".js": [".ts", ".tsx", ".js", ".jsx"] }` in webpack config
+- **Drizzle relational queries** (`db.query.X.findFirst()`) return a wrapper type that doesn't narrow well with TypeScript — use `db.select().from(X).where(...).get()` for null checks, then query relations separately
+- **Agent worker path**: Resolve from monorepo root (`join(process.cwd(), "..", "..")`) not from `packages/web/node_modules` — `@ranger/agent` is not a dependency of `@ranger/web`
+- **`.gitignore` artifacts**: Use `/artifacts/` (root-only) not `artifacts/` to avoid ignoring `app/api/artifacts/` route files
+- **Drizzle migration SQL**: Uses `--> statement-breakpoint` as delimiter, not semicolons
+- **Seed script idempotency**: Delete the DB file before re-seeding
+
+## Verification
+
+After finishing a unit of work (new function, endpoint, component, bug fix):
+
+1. `pnpm --filter <affected-package> typecheck`
+2. `pnpm --filter <affected-package> test` (if tests exist for that package)
+
+Before claiming any task is complete:
+
+1. `pnpm typecheck` (all packages)
+2. `pnpm test` (all tests pass)
+3. `pnpm lint`
