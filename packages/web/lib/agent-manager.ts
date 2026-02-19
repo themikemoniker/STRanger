@@ -26,10 +26,11 @@ interface ActiveRun {
 const activeRuns = new Map<string, ActiveRun>();
 
 function getWorkerPath(): string {
-  // Prefer built dist; fall back to source for dev
-  const distPath = join(process.cwd(), "node_modules", "@ranger", "agent", "dist", "worker.js");
+  // Resolve relative to monorepo root (packages/web is 2 levels deep)
+  const monorepoRoot = join(process.cwd(), "..", "..");
+  const distPath = join(monorepoRoot, "packages", "agent", "dist", "worker.js");
   if (existsSync(distPath)) return distPath;
-  return join(process.cwd(), "..", "agent", "src", "worker.ts");
+  return join(monorepoRoot, "packages", "agent", "src", "worker.ts");
 }
 
 export function startVerification(opts: {
