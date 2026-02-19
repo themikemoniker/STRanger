@@ -1,10 +1,10 @@
-# Ranger
+# STRanger
 
-Self-hosted UI feature review automation. Ranger uses a Playwright-powered browser agent to verify UI features against human-written scenarios — then reports verdicts with screenshots in a dashboard.
+Self-hosted UI feature review automation. STRanger uses a Playwright-powered browser agent to verify UI features against human-written scenarios — then reports verdicts with screenshots in a dashboard.
 
 **The problem:** Coding agents build features but can't visually verify them. You end up alt-tabbing to a browser, clicking around, and eyeballing the result.
 
-**The solution:** Write a scenario like *"Navigate to /login, verify the form has email and password fields and a submit button"*, point Ranger at your dev server, and get back a pass/fail verdict with annotated screenshots — all without leaving your terminal.
+**The solution:** Write a scenario like *"Navigate to /login, verify the form has email and password fields and a submit button"*, point STRanger at your dev server, and get back a pass/fail verdict with annotated screenshots — all without leaving your terminal.
 
 ![Reviews list](tour/01-reviews-list.png)
 
@@ -12,7 +12,7 @@ Self-hosted UI feature review automation. Ranger uses a Playwright-powered brows
 
 ```
 You describe what to verify (scenarios)
-  → Ranger launches a browser and navigates your app
+  → STRanger launches a browser and navigates your app
   → LLM agent observes screenshots, reasons, and interacts with the page
   → Returns a verdict (passed/failed) with screenshots at each step
   → Results appear in the dashboard and stream to your terminal via SSE
@@ -130,11 +130,11 @@ OPENAI_API_KEY=sk-... ranger go <id> --llm-provider openai
 
 ## Claude Code hooks
 
-Ranger includes hooks that integrate with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) to suggest verification after edits.
+STRanger includes hooks that integrate with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) to suggest verification after edits.
 
 | Hook | Event | Behavior |
 |------|-------|----------|
-| `ranger-notify.sh` | PostToolUse (async) | Logs edited file to Ranger API |
+| `ranger-notify.sh` | PostToolUse (async) | Logs edited file to STRanger API |
 | `ranger-suggest.sh` | Stop (sync) | Checks for active review on branch, injects suggestion |
 
 The hooks are registered in `.claude/settings.json` and work automatically when Claude Code is used in this repo. They never block — errors are silently swallowed.
